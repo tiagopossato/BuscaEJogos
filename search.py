@@ -116,11 +116,56 @@ def nullHeuristic(state, problem=None):
 def iterativeDeepeningSearch(problem):
     """
     Perform DFS with increasingly larger depth.
-
     Begin with a depth of 1 and increment depth by 1 at every step.
+    python pacman.py -l tinyMaze -p SearchAgent -a fn=ids
+    goal: objetivo, meta
+    walls: paredes
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    print(dir(problem))
+    # util.raiseNotDefined()
+    print("Posicao inicial:" + str(problem.getStartState()))
+    print("Paredes:")
+    print(problem.walls)
+    listaParedes = problem.walls.asList()
+    grafo = []
+    for p in listaParedes:
+        try:
+            movimentos = problem.getActions((p[0]-1, p[1]-1))
+            if(len(movimentos)!=0):
+                # print(p)
+                # Desconsidera as paredes externas?            
+                p = (p[0]-1, p[1]-1)
+                # print(p)
+                grafo.append({
+                    'posicao' : p,
+                    'movimentos' : problem.getActions(p)
+                })                
+        except IndexError:
+            print('IndexError')
+            continue
+    
+    print("Movimentos possiveis:")
+    for no in grafo:
+        print(no)
+
+    # for data in problem.walls.data:
+    #     print(data)
+
+    print("Objetivo:" + str(problem.goal))
+
+    # print(problem.getActions((3,2)))
+    # print(problem.getCostOfActions(problem.getActions((1,1))))
+    # problem.visualize
+    # from time import sleep
+    # sleep(100)
+    acoes = ['South', 'South', 'West', 'South', 'West', 'West', 'South', 'West']
+    return acoes
+    """
+    O retorno da funcao deve ser uma lista contendo as acaes necessarias, 
+    em sequencia, para que o Pacman consiga pegar a comida. 
+    """
+    # util.raiseNotDefined()
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
