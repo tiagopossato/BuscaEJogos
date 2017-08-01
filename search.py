@@ -114,13 +114,108 @@ def nullHeuristic(state, problem=None):
     return 0
 
 def iterativeDeepeningSearch(problem):
+    print(dir(problem))
+    # util.raiseNotDefined()
+    print("Posicao inicial:" + str(problem.getStartState()))
+    print("Paredes:")
+    print(problem.walls)
+    listaParedes = problem.walls.asList()
+    ultimo = listaParedes[-1]
+    print 'Total de campos: ',  ((ultimo[0])+1) * ((ultimo[1])+1)
+    print 'Total sem as paredes externas: ',  ((ultimo[0])-1) * ((ultimo[1])-1)
+
+    # Montar uma lista com o tamanho total de campos
+    listaTotal = []
+    grafo = []
+
+    for x in range(ultimo[0]+1):
+        for y in range(ultimo[1]+1):
+            s = (x,y)
+            if(s not in listaParedes):
+                listaTotal.append(s)
+                movimentos = problem.getActions(s)
+                if(len(movimentos)!=0):
+                    no = {
+                        'posicao' : s,
+                        'movimentos' : movimentos
+                    }
+                    grafo.append(no)
+    # Pegar a diferenca entre a lista total e a de paredes
+    print(listaTotal)
+
+    # print(len(grafo))
+    print("Movimentos possiveis:")
+    for no in grafo:
+        print(no)
+    
+    # for data in problem.walls.data:
+        # print(data)
+
+    # print("Objetivo:" + str(problem.goal))
+
+    # print(problem.getActions((3,2)))
+    # print(problem.getCostOfActions(problem.getActions((1,1))))
+    """print(problem.getStartState())
+
+    problem.visualize
+    from time import sleep
+    try:
+        sleep(1)
+    except KeyboardInterrupt:
+        print('continuar')
+    """
+    # acoes = ['South', 'South', 'West', 'South', 'West', 'West', 'South', 'West',]
+    # acoes = ['West','West','West','West','South','South','East','South','South','West',]
+    acoes = ['']
+    # print problem.actions(problem.getActions((1,1)))
+    estado_atual2 = problem.getStartState()
+    estado_back = problem.getStartState()
+
+    # estado_back.append(estado_atual2)
+    # print(estado_back)
+    
+    for x in xrange(0, 100):
+        # arrumar esse if, aqui ta o problema
+        if (estado_atual2 not in estado_back): 
+            print("entrou")
+            if (problem.getActions(estado_atual2)[1] == 'North'):
+                # estado_back.append(estado_atual2)
+                # print("ESTADO BACK: ", estado_back)
+                estado_atual2 = (estado_atual2[0],estado_atual2[1]+1) 
+                acoes.append('North') 
+                print(estado_atual2) 
+            elif (problem.getActions(estado_atual2)[1] == 'South'):
+                # estado_back.append(estado_atual2)
+                # print("ESTADO BACK: ", estado_back)
+                estado_atual2 = (estado_atual2[0],estado_atual2[1]-1)
+                acoes.append('South')
+                print(estado_atual2) 
+            elif (problem.getActions(estado_atual2)[1] == 'West'):
+                # estado_back.append(estado_atual2)
+                # print("ESTADO BACK: ", estado_back)
+                estado_atual2 = (estado_atual2[0]-1,estado_atual2[1])
+                acoes.append('West')
+                print(estado_atual2) 
+            elif (problem.getActions(estado_atual2)[1] == 'East'):
+                # estado_back.append(estado_atual2)
+                # print("ESTADO BACK: ", estado_back)
+                estado_atual2 = (estado_atual2[0]+1,estado_atual2[1])
+                acoes.append('East')
+                print(estado_atual2)
+    
+    acoes.pop(0)
+    
+    print(acoes)
+    # print problem.goalTest()
+    return acoes    
+
     """
     Perform DFS with increasingly larger depth.
 
     Begin with a depth of 1 and increment depth by 1 at every step.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # util.raiseNotDefined()
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
