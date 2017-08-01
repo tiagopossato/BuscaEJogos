@@ -128,41 +128,57 @@ def iterativeDeepeningSearch(problem):
     print("Paredes:")
     print(problem.walls)
     listaParedes = problem.walls.asList()
+    ultimo = listaParedes[-1]
+    print 'Total de campos: ',  ((ultimo[0])+1) * ((ultimo[1])+1)
+    print 'Total sem as paredes externas: ',  ((ultimo[0])-1) * ((ultimo[1])-1)
+
+    # Montar uma lista com o tamanho total de campos
+    listaTotal = []
+    for x in range(ultimo[0]+1):
+        for y in range(ultimo[1]+1):
+            s = (x,y)
+            if(s not in listaParedes):
+                listaTotal.append(s)
+    # Pegar a diferenca entre a lista total e a de paredes
+    print(listaTotal)
     grafo = []
-    for p in listaParedes:
+    for p in listaTotal:
         try:
-            movimentos = problem.getActions((p[0]-1, p[1]-1))
+            print(p)
+            movimentos = problem.getActions(p)
             if(len(movimentos)!=0):
-                # print(p)
-                # Desconsidera as paredes externas?            
-                p = (p[0]-1, p[1]-1)
-                # print(p)
-                grafo.append({
+                no = {
                     'posicao' : p,
-                    'movimentos' : problem.getActions(p)
-                })                
+                    'movimentos' : movimentos
+                }
+                print no
+                grafo.append(no)
         except IndexError:
             print('IndexError')
             continue
-    
+    # print(len(grafo))
     print("Movimentos possiveis:")
     for no in grafo:
         print(no)
 
-    # for data in problem.walls.data:
-    #     print(data)
+    for data in problem.walls.data:
+        print(data)
 
     print("Objetivo:" + str(problem.goal))
 
     # print(problem.getActions((3,2)))
     # print(problem.getCostOfActions(problem.getActions((1,1))))
-    # problem.visualize
-    # from time import sleep
-    # sleep(100)
-    acoes = ['South', 'South', 'West', 'South', 'West', 'West', 'South', 'West']
+    problem.visualize
+    from time import sleep
+    try:
+        sleep(100)
+    except KeyboardInterrupt:
+        print('continuar')
+    acoes = ['South', 'South', 'West', 'South', 'West', 'West', 'South', 'West',]
+    # acoes = ['West','West','West','West','South','South','East','South','South','West',]
     return acoes
     """
-    O retorno da funcao deve ser uma lista contendo as acaes necessarias, 
+    O retorno da funcao deve ser uma lista contendo as acoes necessarias, 
     em sequencia, para que o Pacman consiga pegar a comida. 
     """
     # util.raiseNotDefined()
