@@ -171,42 +171,42 @@ def iterativeDeepeningSearch(problem):
     estado_atual2 = problem.getStartState()
     estado_back = problem.getStartState()
 
-    # estado_back.append(estado_atual2)
-    # print(estado_back)
-    
+    estado_back += estado_atual2
+
     for x in xrange(0, 100):
         # arrumar esse if, aqui ta o problema
+        print(estado_atual2)
+        print("estado_atual2 acima e estado_back abaixo")
+        print(estado_back)
+        visited = util.Stack()
+        print(visited)
+        # arrumar o estado back
         if (estado_atual2 not in estado_back): 
             print("entrou")
             if (problem.getActions(estado_atual2)[1] == 'North'):
-                # estado_back.append(estado_atual2)
-                # print("ESTADO BACK: ", estado_back)
+                estado_back += estado_atual2
                 estado_atual2 = (estado_atual2[0],estado_atual2[1]+1) 
                 acoes.append('North') 
                 print(estado_atual2) 
             elif (problem.getActions(estado_atual2)[1] == 'South'):
-                # estado_back.append(estado_atual2)
-                # print("ESTADO BACK: ", estado_back)
+                estado_back += estado_atual2
                 estado_atual2 = (estado_atual2[0],estado_atual2[1]-1)
                 acoes.append('South')
                 print(estado_atual2) 
             elif (problem.getActions(estado_atual2)[1] == 'West'):
-                # estado_back.append(estado_atual2)
-                # print("ESTADO BACK: ", estado_back)
+                estado_back += estado_atual2
                 estado_atual2 = (estado_atual2[0]-1,estado_atual2[1])
                 acoes.append('West')
                 print(estado_atual2) 
             elif (problem.getActions(estado_atual2)[1] == 'East'):
-                # estado_back.append(estado_atual2)
-                # print("ESTADO BACK: ", estado_back)
+                estado_back += estado_atual2
                 estado_atual2 = (estado_atual2[0]+1,estado_atual2[1])
                 acoes.append('East')
                 print(estado_atual2)
     
     acoes.pop(0)
-    
+
     print(acoes)
-    # print problem.goalTest()
     return acoes    
 
     """
