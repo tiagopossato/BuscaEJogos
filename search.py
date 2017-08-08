@@ -116,7 +116,8 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
-cutoff = 'cutoff'
+
+chamadasRecursivas = 0
 
 def iterativeDeepeningSearch(problem):
     """
@@ -128,7 +129,8 @@ def iterativeDeepeningSearch(problem):
     """
     "*** YOUR CODE HERE ***"
     print(dir(problem))
-    # util.raiseNotDefined()
+    # return []
+    util.raiseNotDefined()
     print("Posicao inicial:" + str(problem.getStartState()))
     print("Paredes:")
     print(problem.walls)
@@ -137,100 +139,63 @@ def iterativeDeepeningSearch(problem):
     print 'Total de campos: ',  ((ultimo[0]) + 1) * ((ultimo[1]) + 1)
     print 'Total sem as paredes externas: ',  ((ultimo[0]) - 1) * ((ultimo[1]) - 1)
 
-
-    # function ITERATIVE-DEEPENING-SEARCH(problem) returns a solution, or failure
-    # for depth = 0 to inf do
-    # result <- DEPTH-LIMITED-SEARCH(problem,depth)
-    # if result != cutoff then return result
-
-    visitedNodes = []
-    caminho = []
-    caminho.append(problem.getStartState())
-    acoes = []
-    while(True):
-        # print(caminho)
-
-        # raw_input()
-        try:
-            no = caminho.pop()
-        except Exception:
-            pass
-        visitedNodes.append(no)
-        if(problem.goalTest(no)):
-            print 'no final'
-            break
-        else:
-            for action in problem.getActions(no):
-                if(action =='North'):
-                    filho = (no[0], no[1] + 1)
-                if(action =='South'):
-                    filho = (no[0], no[1] -1)
-                if(action =='East'):
-                    filho = (no[0]+1, no[1])
-                if(action =='West'):
-                    filho = (no[0] - 1, no[1])
-                
-                if(filho not in visitedNodes):
-                    caminho.append(filho)
-                else:
-                    continue
-            
-
-    # # while(depth < 2):
-    #     result = depthLimitedSearch(problem, depth)
-    #     # raw_input('')
-    #     print '=========================='
-    #     depth = depth + 1
-    #     if(result != cutoff):
-    #         print 'deu'
-    #         print result
-    #         break
-
+    try:
+        depth = 0
+        while(True):
+            result = depthLimitedSearch(problem, depth)
+            depth = depth + 1
+            if(result != 'cutoff'):
+                print 'deu'
+                print result
+                break
+    except KeyboardInterrupt:
+        pass
+    print 'chamadasRecursivas: ' , chamadasRecursivas
 
     # # Montar uma lista com o tamanho total de campos
-    # listaTotal = []
-    # for x in range(ultimo[0] + 1):
-    #     for y in range(ultimo[1] + 1):
-    #         s = (x, y)
-    #         if(s not in listaParedes):
-    #             listaTotal.append(s)
-    # # Pegar a diferenca entre a lista total e a de paredes
-    # print(listaTotal)
-    # grafo = []
-    # for p in listaTotal:
-    #     try:
-    #         print(p)
-    #         movimentos = problem.getActions(p)
-    #         if(len(movimentos) != 0):
-    #             no = {
-    #                 'posicao': p,
-    #                 'movimentos': movimentos,
-    #                 'visitado': False
-    #             }
-    #             print no
-    #             grafo.append(no)
-    #     except IndexError:
-    #         print('IndexError')
-    #         continue
-    # # print(len(grafo))
-    # print("Movimentos possiveis:")
-    # for no in grafo:
-    #     print(no)
+    listaTotal = []
+    for x in range(ultimo[0] + 1):
+        for y in range(ultimo[1] + 1):
+            s = (x, y)
+            if(s not in listaParedes):
+                listaTotal.append(s)
+    # Pegar a diferenca entre a lista total e a de paredes
+    print(listaTotal)
+    grafo = []
+    for p in listaTotal:
+        try:
+            print(p)
+            movimentos = problem.getActions(p)
+            if(len(movimentos) != 0):
+                no = {
+                    'posicao': p,
+                    'movimentos': movimentos,
+                    'visitado': False
+                }
+                print no
+                grafo.append(no)
+        except IndexError:
+            print('IndexError')
+            continue
+    # print(len(grafo))
+    print("Movimentos possiveis:")
+    for no in grafo:
+        print(no)
 
-    # for data in problem.walls.data:
-    #     print(data)
+    for data in problem.walls.data:
+        print(data)
 
-    # print("Objetivo:" + str(problem.goal))
+    print("Objetivo:" + str(problem.goal))
 
-    # # print(problem.getActions((3,2)))
-    # # print(problem.getCostOfActions(problem.getActions((1,1))))
-    # problem.visualize
-    # from time import sleep
-    # try:
-    #     sleep(100)
-    # except KeyboardInterrupt:
-    #     print('continuar')
-    # acoes = ['South', 'South', 'West', 'South','West', 'West', 'South', 'West', ]
+    # print(problem.getActions((3,2)))
+    # print(problem.getCostOfActions(problem.getActions((1,1))))
+    problem.visualize
+    from time import sleep
+    try:
+        sleep(100)
+    except KeyboardInterrupt:
+        print('continuar')
+    acoes = ['South', 'South', 'West', 'South','West', 'West', 'South', 'West', ]
     # acoes = ['West','West','West','West','South','South','East','South','South','West',]
     return acoes
     """
@@ -241,53 +206,50 @@ def iterativeDeepeningSearch(problem):
 
 
 # function DEPTH-LIMITED-SEARCH(problem,limit) returns a solution, or failure/cutoff
-# return RECURSIVE-DLS(MAKE-NODE(problem.INTIAL-STATE),problem,limit)
+    # return RECURSIVE-DLS(MAKE-NODE(problem.INTIAL-STATE),problem,limit)
 
-# visitedNodes = []
+visitedNodes = []
 
-# def depthLimitedSearch(problem, limit):
-#     visitedNodes.append(problem.getStartState())
+def depthLimitedSearch(problem, limit):
+    return recursiveDLS(problem.getStartState(), problem, limit)
 
-#     if(problem.goalTest(no)):
 
-#     return recursiveDLS(problem.getStartState(), problem, limit)
-
-# def recursiveDLS(no, problem, limit):
-#     # if problem.GOAL-TEST(node.STATE) then return SOLUTION(node)
-#     if(problem.goalTest(no)):
-#         print no
-#         print 'No final encontrado'
-#         return no
-#     # else if limit = 0 then return cutoff
-#     elif (limit == 0):
-#         return cutoff
-#     # else
-#     else:
-#         # cutoff_occurred? <- false
-#         cutoff_occurred = False
-#         for action in problem.getActions(no):
-#             # child <- CHILD-NODE(problem,node,action)  
-#             if(action =='North'):
-#                 filho = (no[0], no[1] + 1)
-#             if(action =='South'):
-#                 filho = (no[0], no[1] -1)
-#             if(action =='East'):
-#                 filho = (no[0]+1, no[1])
-#             if(action =='West'):
-#                 filho = (no[0] - 1, no[1]) 
-#             # result <- RECURSIVE-DLS(child,problem,limit-1)
-#             result = recursiveDLS(filho, problem, limit-1)
-#             # if result = cutoff then cutoff_occurred? <- true
-#             if(result == cutoff):
-#                 cutoff_occurred = True
-#             # else if result != failure then return result
-#             elif(result != False):
-#                 return result
-#         # if cutoff_occurred? then return cutoff else return failure
-#         if(cutoff_occurred):
-#             return cutoff
-#         else:
-#             return False
+def recursiveDLS(no, problem, limit):
+    global chamadasRecursivas
+    chamadasRecursivas = chamadasRecursivas + 1
+    # if problem.GOAL-TEST(node.STATE) then return SOLUTION(node)
+    print no
+    if(problem.goalTest(no)):
+        print no
+        print 'No final encontrado'
+        return no
+    # else if limit = 0 then return cutoff
+    elif (limit == 0):
+        return 'cutoff'
+    # else
+    else:
+        # cutoff_occurred? <- false
+        cutoff_occurred = False
+        for action in problem.getActions(no):
+            # child <- CHILD-NODE(problem,node,action)  
+            if(action =='North'):
+                filho = (no[0], no[1] + 1)
+            if(action =='South'):
+                filho = (no[0], no[1] -1)
+            if(action =='East'):
+                filho = (no[0]+1, no[1])
+            if(action =='West'):
+                filho = (no[0] - 1, no[1]) 
+            # result <- RECURSIVE-DLS(child,problem,limit-1)
+            result = recursiveDLS(filho, problem, limit-1)
+            # if result = cutoff then cutoff_occurred? <- true
+            if(result == 'cutoff'):
+                cutoff_occurred = True
+            # else if result != failure then return result
+            elif(result is not None):
+                return result
+        # if cutoff_occurred? then return cutoff else return failure
+        return 'cutoff' if cutoff_occurred else None
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
