@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -18,7 +18,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -34,6 +34,7 @@ Pacman agents (in searchAgents.py).
 import util
 import sys
 import copy
+
 
 class SearchProblem:
     """
@@ -61,7 +62,7 @@ class SearchProblem:
         """
         Given a state, returns available actions.
         Returns a list of actions
-        """        
+        """
         util.raiseNotDefined()
 
     def getResult(self, state, action):
@@ -95,7 +96,8 @@ def tinyMazeSearch(problem):
     from game import Directions
     s = Directions.SOUTH
     w = Directions.WEST
-    return  [s, s, w, s, w, w, s, w]
+    return [s, s, w, s, w, w, s, w]
+
 
 def breadthFirstSearch(problem):
     """
@@ -106,6 +108,7 @@ def breadthFirstSearch(problem):
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
 
+
 def nullHeuristic(state, problem=None):
     """
     A heuristic function estimates the cost from the current state to the nearest
@@ -113,114 +116,159 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+
+chamadasRecursivas = 0
+acoes = []
+
 def iterativeDeepeningSearch(problem):
-    print(dir(problem))
-    # util.raiseNotDefined()
-    print("Posicao inicial:" + str(problem.getStartState()))
-    print("Paredes:")
-    print(problem.walls)
-    listaParedes = problem.walls.asList()
-    ultimo = listaParedes[-1]
-    print 'Total de campos: ',  ((ultimo[0])+1) * ((ultimo[1])+1)
-    print 'Total sem as paredes externas: ',  ((ultimo[0])-1) * ((ultimo[1])-1)
+    """
+    Perform DFS with increasingly larger depth.
+    Begin with a depth of 1 and increment depth by 1 at every step.
+    python pacman.py -l tinyMaze -p SearchAgent -a fn=ids
+    goal: objetivo, meta
+    walls: paredes
+    """
+    "*** YOUR CODE HERE ***"
+    # print(dir(problem))
+    # # return []
+    # # util.raiseNotDefined()
+    # print("Posicao inicial:" + str(problem.getStartState()))
+    # print("Paredes:")
+    # print(problem.walls)
+    # listaParedes = problem.walls.asList()
+    # ultimo = listaParedes[-1]
+    # print 'Total de campos: ',  ((ultimo[0]) + 1) * ((ultimo[1]) + 1)
+    # print 'Total sem as paredes externas: ',  ((ultimo[0]) - 1) * ((ultimo[1]) - 1)
 
-    # Montar uma lista com o tamanho total de campos
-    listaTotal = []
-    grafo = []
+    try:
+        depth = 0
+        while(True):
+            result = depthLimitedSearch(problem, depth)
+            depth = depth + 1
+            if(result != 'cutoff'):
+                print 'deu'
+                print result
+                break
+    except KeyboardInterrupt:
+        pass
+    print 'chamadasRecursivas: ' , chamadasRecursivas
 
-    for x in range(ultimo[0]+1):
-        for y in range(ultimo[1]+1):
-            s = (x,y)
-            if(s not in listaParedes):
-                listaTotal.append(s)
-                movimentos = problem.getActions(s)
-                if(len(movimentos)!=0):
-                    no = {
-                        'posicao' : s,
-                        'movimentos' : movimentos
-                    }
-                    grafo.append(no)
-    # Pegar a diferenca entre a lista total e a de paredes
-    print(listaTotal)
+    # # # Montar uma lista com o tamanho total de campos
+    # listaTotal = []
+    # for x in range(ultimo[0] + 1):
+    #     for y in range(ultimo[1] + 1):
+    #         s = (x, y)
+    #         if(s not in listaParedes):
+    #             listaTotal.append(s)
+    # # Pegar a diferenca entre a lista total e a de paredes
+    # print(listaTotal)
+    # grafo = []
+    # for p in listaTotal:
+    #     try:
+    #         print(p)
+    #         movimentos = problem.getActions(p)
+    #         if(len(movimentos) != 0):
+    #             no = {
+    #                 'posicao': p,
+    #                 'movimentos': movimentos,
+    #                 'visitado': False
+    #             }
+    #             print no
+    #             grafo.append(no)
+    #     except IndexError:
+    #         print('IndexError')
+    #         continue
+    # # print(len(grafo))
+    # print("Movimentos possiveis:")
+    # for no in grafo:
+    #     print(no)
 
-    # print(len(grafo))
-    print("Movimentos possiveis:")
-    for no in grafo:
-        print(no)
-    
     # for data in problem.walls.data:
-        # print(data)
+    #     print(data)
 
     # print("Objetivo:" + str(problem.goal))
 
-    # print(problem.getActions((3,2)))
-    # print(problem.getCostOfActions(problem.getActions((1,1))))
-    """print(problem.getStartState())
-
-    problem.visualize
-    from time import sleep
-    try:
-        sleep(1)
-    except KeyboardInterrupt:
-        print('continuar')
-    """
-    # acoes = ['South', 'South', 'West', 'South', 'West', 'West', 'South', 'West',]
+    # # print(problem.getActions((3,2)))
+    # # print(problem.getCostOfActions(problem.getActions((1,1))))
+    # problem.visualize
+    # from time import sleep
+    # try:
+    #     sleep(100)
+    # except KeyboardInterrupt:
+    #     print('continuar')
+    # acoes = ['South', 'South', 'West', 'South',]
+    # print(len(acoes))
     # acoes = ['West','West','West','West','South','South','East','South','South','West',]
-    acoes = ['']
-    # print problem.actions(problem.getActions((1,1)))
-    estado_atual2 = problem.getStartState()
-    estado_back = problem.getStartState()
-
-    estado_back += estado_atual2
-
-    for x in xrange(0, 100):
-        # arrumar esse if, aqui ta o problema
-        print(estado_atual2)
-        print("estado_atual2 acima e estado_back abaixo")
-        print(estado_back)
-        visited = util.Stack()
-        print(visited)
-        # arrumar o estado back
-        if (estado_atual2 not in estado_back): 
-            print("entrou")
-            if (problem.getActions(estado_atual2)[1] == 'North'):
-                estado_back += estado_atual2
-                estado_atual2 = (estado_atual2[0],estado_atual2[1]+1) 
-                acoes.append('North') 
-                print(estado_atual2) 
-            elif (problem.getActions(estado_atual2)[1] == 'South'):
-                estado_back += estado_atual2
-                estado_atual2 = (estado_atual2[0],estado_atual2[1]-1)
-                acoes.append('South')
-                print(estado_atual2) 
-            elif (problem.getActions(estado_atual2)[1] == 'West'):
-                estado_back += estado_atual2
-                estado_atual2 = (estado_atual2[0]-1,estado_atual2[1])
-                acoes.append('West')
-                print(estado_atual2) 
-            elif (problem.getActions(estado_atual2)[1] == 'East'):
-                estado_back += estado_atual2
-                estado_atual2 = (estado_atual2[0]+1,estado_atual2[1])
-                acoes.append('East')
-                print(estado_atual2)
-    
-    acoes.pop(0)
-
-    print(acoes)
-    return acoes    
-
+    return acoes[::-1]
     """
-    Perform DFS with increasingly larger depth.
-
-    Begin with a depth of 1 and increment depth by 1 at every step.
+    O retorno da funcao deve ser uma lista contendo as acoes necessarias, 
+    em sequencia, para que o Pacman consiga pegar a comida. 
     """
-    "*** YOUR CODE HERE ***"
     # util.raiseNotDefined()
+
+
+# function DEPTH-LIMITED-SEARCH(problem,limit) returns a solution, or failure/cutoff
+    # return RECURSIVE-DLS(MAKE-NODE(problem.INTIAL-STATE),problem,limit)
+
+visitedNodes = []
+actions = util.Queue()
+visited = util.Queue()
+
+def depthLimitedSearch(problem, limit):
+    return recursiveDLS(problem.getStartState(), problem, limit)
+
+
+def recursiveDLS(no, problem, limit):
+    # print(limit)
+    global acoes
+    global chamadasRecursivas
+    global actions
+    global visited
+    chamadasRecursivas = chamadasRecursivas + 1
+    # if problem.GOAL-TEST(node.STATE) then return SOLUTION(node)
+    # print no
+    if(problem.goalTest(no)):
+        print no
+        print 'No final encontrado'
+        return no
+    # else if limit = 0 then return cutoff
+    elif (limit == 0):
+        return 'cutoff'
+    # else
+    else:
+        # cutoff_occurred? <- false
+        cutoff_occurred = False
+
+        result = ''
+        # expandindo o no.
+        for action in problem.getActions(no):
+            # child <- CHILD-NODE(problem,node,action)  
+            child = problem.getResult(no,action)
+            actions.push(problem.getActions(child))
+            visited.push(child)
+            # result <- RECURSIVE-DLS(child,problem,limit-1)
+
+        for action in actions.list:
+            print(action)
+            print(visited.list)
+            if action not in visited:
+                result = recursiveDLS(child, problem, limit-1)
+                # visited.push(child)
+            # if result = cutoff then cutoff_occurred? <- true
+            if(result == 'cutoff'):
+                cutoff_occurred = True
+            # else if result != failure then return result
+            elif(result is not None):
+                acoes.append(action)
+                return result
+        # if cutoff_occurred? then return cutoff else return failure
+        return 'cutoff' if cutoff_occurred else None
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
+
 
 # Abbreviations
 bfs = breadthFirstSearch
