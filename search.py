@@ -117,139 +117,53 @@ def nullHeuristic(state, problem=None):
     return 0
 
 
-chamadasRecursivas = 0
-
 def iterativeDeepeningSearch(problem):
     """
     Perform DFS with increasingly larger depth.
+
     Begin with a depth of 1 and increment depth by 1 at every step.
-    python pacman.py -l tinyMaze -p SearchAgent -a fn=ids
-    goal: objetivo, meta
-    walls: paredes
     """
     "*** YOUR CODE HERE ***"
-    print(dir(problem))
-    # return []
-    util.raiseNotDefined()
-    print("Posicao inicial:" + str(problem.getStartState()))
-    print("Paredes:")
-    print(problem.walls)
-    listaParedes = problem.walls.asList()
-    ultimo = listaParedes[-1]
-    print 'Total de campos: ',  ((ultimo[0]) + 1) * ((ultimo[1]) + 1)
-    print 'Total sem as paredes externas: ',  ((ultimo[0]) - 1) * ((ultimo[1]) - 1)
-
-    try:
-        depth = 0
-        while(True):
-            result = depthLimitedSearch(problem, depth)
-            depth = depth + 1
-            if(result != 'cutoff'):
-                print 'deu'
-                print result
-                break
-    except KeyboardInterrupt:
-        pass
-    print 'chamadasRecursivas: ' , chamadasRecursivas
-
-    # # Montar uma lista com o tamanho total de campos
-    listaTotal = []
-    for x in range(ultimo[0] + 1):
-        for y in range(ultimo[1] + 1):
-            s = (x, y)
-            if(s not in listaParedes):
-                listaTotal.append(s)
-    # Pegar a diferenca entre a lista total e a de paredes
-    print(listaTotal)
-    grafo = []
-    for p in listaTotal:
-        try:
-            print(p)
-            movimentos = problem.getActions(p)
-            if(len(movimentos) != 0):
-                no = {
-                    'posicao': p,
-                    'movimentos': movimentos,
-                    'visitado': False
-                }
-                print no
-                grafo.append(no)
-        except IndexError:
-            print('IndexError')
-            continue
-    # print(len(grafo))
-    print("Movimentos possiveis:")
-    for no in grafo:
-        print(no)
-
-    for data in problem.walls.data:
-        print(data)
-
-    print("Objetivo:" + str(problem.goal))
-
-    # print(problem.getActions((3,2)))
-    # print(problem.getCostOfActions(problem.getActions((1,1))))
-    problem.visualize
-    from time import sleep
-    try:
-        sleep(100)
-    except KeyboardInterrupt:
-        print('continuar')
-    acoes = ['South', 'South', 'West', 'South','West', 'West', 'South', 'West', ]
-    # acoes = ['West','West','West','West','South','South','East','South','South','West',]
-    return acoes
-    """
-    O retorno da funcao deve ser uma lista contendo as acoes necessarias, 
-    em sequencia, para que o Pacman consiga pegar a comida. 
-    """
-    # util.raiseNotDefined()
+    x = 1
+    while True:
+        visited = util.Queue()  # hummmmmmm
+        solution = util.Queue()  # hummmmm
+        border = util.Stack()  # border??? frontierrr????
+        result = BPLRecursive(problem.getStartState(),
+                              problem, x, solution, visited, border)
+        x += 1
+        if result != 0:
+            return solution.list
 
 
-# function DEPTH-LIMITED-SEARCH(problem,limit) returns a solution, or failure/cutoff
-    # return RECURSIVE-DLS(MAKE-NODE(problem.INTIAL-STATE),problem,limit)
-
-visitedNodes = []
-
-def depthLimitedSearch(problem, limit):
-    return recursiveDLS(problem.getStartState(), problem, limit)
-
-
-def recursiveDLS(no, problem, limit):
-    global chamadasRecursivas
-    chamadasRecursivas = chamadasRecursivas + 1
-    # if problem.GOAL-TEST(node.STATE) then return SOLUTION(node)
-    print no
-    if(problem.goalTest(no)):
-        print no
-        print 'No final encontrado'
-        return no
-    # else if limit = 0 then return cutoff
-    elif (limit == 0):
-        return 'cutoff'
-    # else
+def BPLRecursive(node, problem, limit, solution, visited, border):
+    visited.push(node)
+    if problem.goalTest(node):
+        return True
+    elif limit == 0:
+        return 0
     else:
-        # cutoff_occurred? <- false
-        cutoff_occurred = False
-        for action in problem.getActions(no):
-            # child <- CHILD-NODE(problem,node,action)  
-            if(action =='North'):
-                filho = (no[0], no[1] + 1)
-            if(action =='South'):
-                filho = (no[0], no[1] -1)
-            if(action =='East'):
-                filho = (no[0]+1, no[1])
-            if(action =='West'):
-                filho = (no[0] - 1, no[1]) 
-            # result <- RECURSIVE-DLS(child,problem,limit-1)
-            result = recursiveDLS(filho, problem, limit-1)
-            # if result = cutoff then cutoff_occurred? <- true
-            if(result == 'cutoff'):
-                cutoff_occurred = True
-            # else if result != failure then return result
-            elif(result is not None):
-                return result
-        # if cutoff_occurred? then return cutoff else return failure
-        return 'cutoff' if cutoff_occurred else None
+        cut = False
+        actions = util.Queue()
+        for action in problem.getActions(node):
+            child = problem.getResult(node, action)
+            border.push(child)
+            actions.push(action)
+        for action in actions.list:
+            child = border.pop()
+            if visited.list.count(child) == 0 and border.list.count(child) == 0:
+                result = BPLRecursive(
+                    child, problem, limit - 1, solution, visited, border)
+                if result == 0:
+                    cut = True
+                elif result is not None:
+                    solution.push(action)
+                    return True
+        if cut:
+            return 0
+        else:
+            return None
+
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
