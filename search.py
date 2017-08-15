@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-#
+# 
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -18,7 +18,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-#
+# 
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -35,12 +35,10 @@ import util
 import sys
 import copy
 
-
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
     any of the methods (in object-oriented terminology: an abstract class).
-
     You do not need to change anything in this class, ever.
     """
 
@@ -53,7 +51,6 @@ class SearchProblem:
     def goalTest(self, state):
         """
           state: Search state
-
         Returns True if and only if the state is a valid goal state.
         """
         util.raiseNotDefined()
@@ -62,7 +59,7 @@ class SearchProblem:
         """
         Given a state, returns available actions.
         Returns a list of actions
-        """
+        """        
         util.raiseNotDefined()
 
     def getResult(self, state, action):
@@ -81,7 +78,6 @@ class SearchProblem:
     def getCostOfActions(self, actions):
         """
          actions: A list of actions to take
-
         This method returns the total cost of a particular sequence of actions.
         The sequence must be composed of legal moves.
         """
@@ -96,18 +92,15 @@ def tinyMazeSearch(problem):
     from game import Directions
     s = Directions.SOUTH
     w = Directions.WEST
-    return [s, s, w, s, w, w, s, w]
-
+    return  [s, s, w, s, w, w, s, w]
 
 def breadthFirstSearch(problem):
     """
     Search the shallowest nodes in the search tree first.
-
     You are not required to implement this, but you may find it useful for Q5.
     """
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
-
 
 def nullHeuristic(state, problem=None):
     """
@@ -116,25 +109,21 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
-
 def iterativeDeepeningSearch(problem):
     """
     Perform DFS with increasingly larger depth.
-
     Begin with a depth of 1 and increment depth by 1 at every step.
     """
     "*** YOUR CODE HERE ***"
     x = 1
     while True:
-        visited = util.Queue()  # hummmmmmm
-        solution = util.Queue()  # hummmmm
-        border = util.Stack()  # border??? frontierrr????
-        result = BPLRecursive(problem.getStartState(),
-                              problem, x, solution, visited, border)
+        visited = util.Queue()
+        solution = util.Queue()
+        border = util.Stack()
+        result = BPLRecursive(problem.getStartState(), problem, x, solution, visited, border)
         x += 1
-        if result != 0:
+        if result != 0:            
             return solution.list
-
 
 def BPLRecursive(node, problem, limit, solution, visited, border):
     visited.push(node)
@@ -152,11 +141,11 @@ def BPLRecursive(node, problem, limit, solution, visited, border):
         for action in actions.list:
             child = border.pop()
             if visited.list.count(child) == 0 and border.list.count(child) == 0:
-                result = BPLRecursive(
-                    child, problem, limit - 1, solution, visited, border)
+                result = BPLRecursive(child, problem, limit - 1, solution, visited, border)
                 if result == 0:
                     cut = True
                 elif result is not None:
+                    print(action)
                     solution.push(action)
                     return True
         if cut:
@@ -165,11 +154,35 @@ def BPLRecursive(node, problem, limit, solution, visited, border):
             return None
 
 
-def aStarSearch(problem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+# manhattanHeuristic: Heuristica que calcula a quantos saltos faltam para chegar no objetivo
+#                     desconsiderando as paredes
 
+# euclideanHeuristic: Calcula a distancia em linha reta ate o objetivo
+
+def aStarSearch(problem, heuristic=nullHeuristic):
+    # print(dir(problem))
+    # print problem.getResult((1,1),'West')
+    # exit(-10)
+    visited = []
+    border = util.PriorityQueue()
+    start = problem.getStartState()
+    border.push( (start, []), 0)
+
+    while not border.isEmpty():
+        node, actions = border.pop()
+
+        if problem.goalTest(node):
+            return actions
+
+        visited.append(node)
+
+        for action in problem.getActions(node):
+            next = problem.getResult(node, action)
+            if not next in visited:
+                new_actions = actions + [action]
+                score = problem.getCostOfActions(new_actions) + heuristic(next, problem)
+                border.push( (next, new_actions), score)
+    return []
 
 # Abbreviations
 bfs = breadthFirstSearch
