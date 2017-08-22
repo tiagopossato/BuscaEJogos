@@ -125,7 +125,31 @@ def iterativeDeepeningSearch(problem):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # print(dir(problem))
+    # print problem.getResult((1,1),'West')
+    # exit(-10)
+    visited = []
+    border = util.PriorityQueue()
+    start = problem.getStartState()
+    border.push( (start, []), 0)
+ 
+    while not border.isEmpty():
+        node, actions = border.pop()
+
+        if problem.goalTest(node):            
+            return actions            
+        
+        if node not in visited:
+            visited.append(node)
+            
+        for action in problem.getActions(node):
+            nextNode = problem.getResult(node, action)
+            new_actions = actions + [action]
+            score = problem.getCostOfActions(new_actions) + heuristic(nextNode, problem)
+            if not nextNode in visited or score < problem.getCost(node, action):
+            # if not nextNode in visited:
+                border.push( (nextNode, new_actions), score)
+    return []
 
 # Abbreviations
 bfs = breadthFirstSearch
