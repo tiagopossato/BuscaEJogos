@@ -14,6 +14,7 @@
 
 from util import manhattanDistance
 from game import Directions
+from searchAgents import mazeDistance
 import random, util
 
 from game import Agent
@@ -67,14 +68,27 @@ class ReflexAgent(Agent):
         to create a masterful evaluation function.
         """
         # Useful information you can extract from a GameState (pacman.py)
+
         successorGameState = currentGameState.generatePacmanSuccessor(action)
         newPos = successorGameState.getPacmanPosition()
         newFood = successorGameState.getFood()
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+        score = successorGameState.getScore()
 
-        "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
+        for ghost in newGhostStates:
+            dist = manhattanDistance(newPos, ghost.getPosition())
+            if dist < 2 and ghost.scaredTimer == 0:
+                return -99
+        foodScore = 0
+        for food in newFood.asList():
+            dist = manhattanDistance(newPos, food)
+            if dist < foodScore or foodScore is 0:
+                foodScore = dist
+        if foodScore > 0:
+            foodScore = 1.0 / foodScore
+        return foodScore + score
+
 
 def scoreEvaluationFunction(currentGameState):
     """
@@ -128,8 +142,40 @@ class MinimaxAgent(MultiAgentSearchAgent):
           gameState.getNumAgents():
             Returns the total number of agents in the game
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        result = self.max(gameState, self.depth)
+        return result
+
+    def min(self, gameState, depth, agent = 1):
+        result = []
+        if gameState.isLose() or gameState.isWin() or depth is 0:
+            return self.evaluationFunction(gameState)
+
+        for action in gameState.getLegalActions(agent):
+            successor = gameState.generateSuccessor(agent, action)
+            if agent < gameState.getNumAgents() - 1:
+                result.append(self.min(successor, depth, agent + 1))
+            else:
+                result.append(self.max(successor, depth - 1))
+
+        return min(result)
+
+    def max(self, gameState, depth):
+        result = {}
+        scores = []
+        if gameState.isLose() or gameState.isWin() or depth is 0:
+            return self.evaluationFunction(gameState)
+        if depth > 0:
+            for action in gameState.getLegalActions(0):
+                minVal  = self.min(gameState.generateSuccessor(0, action), depth)
+                scores.append(minVal)
+                result[minVal] = action
+
+        if depth is self.depth:
+            return result[max(scores)]
+        elif list:
+            return max(scores)
+
+
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
@@ -144,7 +190,39 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
           legal moves.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        result = self.max(gameState, self.depth)
+        return result
+
+    def expect(self, gameState, depth, agent = 1):
+        if gameState.isLose() or gameState.isWin() or depth is 0:
+            return self.evaluationFunction(gameState)
+        sum = 0
+        for action in gameState.getLegalActions(agent):
+            successor = gameState.generateSuccessor(agent, action)
+            if agent < gameState.getNumAgents() - 1:
+                sum += self.expect(successor, depth, agent + 1)
+            else:
+                sum += self.max(successor, depth - 1)
+
+        return sum / len(gameState.getLegalActions(agent))
+
+    def max(self, gameState, depth):
+        result = {}
+        scores = []
+        if gameState.isLose() or gameState.isWin() or depth is 0:
+            return self.evaluationFunction(gameState)
+        if depth > 0:
+            for action in gameState.getLegalActions(0):
+                expectVal  = self.expect(gameState.generateSuccessor(0, action), depth)
+                scores.append(expectVal)
+                result[expectVal] = action
+
+        if depth is self.depth:
+            return result[max(scores)]
+        elif list:
+            return max(scores)
+
+
 
 def betterEvaluationFunction(currentGameState):
     """
@@ -152,9 +230,83 @@ def betterEvaluationFunction(currentGameState):
       evaluation function (question 9).
 
       DESCRIPTION: <write something here so we know what you did>
-    """
+
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    newPos = currentGameState.getPacmanPosition()
+    newFood = currentGameState.getFood()
+    newGhostStates = currentGameState.getGhostStates()
+    newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+    score = currentGameState.getScore()
+
+    for ghost in newGhostStates:
+        dist = manhattanDistance(newPos, ghost.getPosition())
+        if dist < 6.0 and ghost.scaredTimer == 0 and not flag:
+            flag = not flag
+            return -99
+    foodScore = 0
+    for food in newFood.asList():
+        dist = manhattanDistance(newPos, food)
+        if dist < foodScore or foodScore is 0:
+            foodScore = dist
+    if foodScore > 0:
+        foodScore = 1.0 / foodScore
+
+    capsuleScore = 0
+    for capsule in currentGameState.getCapsules():
+        dist = manhattanDistance(newPos, capsule)
+        if dist > capsuleScore or capsuleScore is 0:
+            capsuleScore = dist
+    if capsuleScore > 0:
+        capsuleScore = 1.0 / capsuleScore
+    return (foodScore - capsuleScore) + score
+    """
+    sum = 0
+    legalMoves = currentGameState.getLegalActions()
+    for action in legalMoves:
+        sum += func(currentGameState, action)
+    if legalMoves:
+        return (sum/len(legalMoves)) + currentGameState.getScore() - random.random()
+    else:
+        return currentGameState.getScore()
+
+def func(currentGameState, action):
+    """
+    Design a better evaluation function here.
+
+    The evaluation function takes in the current and proposed successor
+    GameStates (pacman.py) and returns a number, where higher numbers are better.
+
+    The code below extracts some useful information from the state, like the
+    remaining food (newFood) and Pacman position after moving (newPos).
+    newScaredTimes holds the number of moves that each ghost will remain
+    scared because of Pacman having eaten a power pellet.
+
+    Print out these variables to see what you're getting, then combine them
+    to create a masterful evaluation function.
+    """
+    # Useful information you can extract from a GameState (pacman.py)
+
+    successorGameState = currentGameState.generatePacmanSuccessor(action)
+    newPos = successorGameState.getPacmanPosition()
+    if(successorGameState.isWin() or newPos in successorGameState.getCapsules()):
+        return -10000000
+
+    newFood = successorGameState.getFood()
+    newGhostStates = successorGameState.getGhostStates()
+    score = successorGameState.getScore()
+
+    for ghost in newGhostStates:
+        dist = manhattanDistance(newPos, ghost.getPosition())
+        if dist < 2 and ghost.scaredTimer == 0:
+            return -99
+    foodScore = 0
+    for food in newFood.asList():
+        dist = manhattanDistance(newPos, food)
+        if dist < foodScore or foodScore is 0:
+            foodScore = dist
+    if foodScore > 0:
+        foodScore = 1.0 / foodScore
+    return foodScore + score
 
 # Abbreviation
 better = betterEvaluationFunction
