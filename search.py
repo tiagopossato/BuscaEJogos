@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -18,7 +18,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -59,7 +59,7 @@ class SearchProblem:
         """
         Given a state, returns available actions.
         Returns a list of actions
-        """        
+        """
         util.raiseNotDefined()
 
     def getResult(self, state, action):
@@ -70,7 +70,7 @@ class SearchProblem:
 
     def getCost(self, state, action):
         """
-        Given a state and an action, returns step cost, which is the incremental cost 
+        Given a state and an action, returns step cost, which is the incremental cost
         of moving to that successor.
         """
         util.raiseNotDefined()
@@ -115,14 +115,14 @@ def iterativeDeepeningSearch(problem):
     Begin with a depth of 1 and increment depth by 1 at every step.
     """
     "*** YOUR CODE HERE ***"
-    x = 1;
+    x = 1
     while True:
-        visited = util.Queue() 
-        solution = util.Queue() 
+        visited = util.Queue()
+        solution = util.Queue()
         border = util.Stack()
         result = BPLRecursive(problem.getStartState(), problem, x, solution, visited, border)
         x += 1
-        if result != 0:            
+        if result != 0:
             return solution.list
 
 def BPLRecursive(node, problem, limit, solution, visited, border):
@@ -153,11 +153,54 @@ def BPLRecursive(node, problem, limit, solution, visited, border):
             return None
 
 
+# manhattanHeuristic: Heuristica que calcula a quantos saltos faltam para chegar no objetivo
+#                     desconsiderando as paredes
+
+# euclideanHeuristic: Calcula a distancia em linha reta ate o objetivo
+
 def aStarSearch(problem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-  
+    start = problem.getStartState()
+    border = util.PriorityQueue()
+    actual_state_cost = heuristic(start,problem)
+
+    visited = []
+    visited_nodes = util.Queue()
+    visited_nodes.push(start)
+    
+    visited = recursive_astar_search(problem, start, border, actual_state_cost, heuristic, visited, visited_nodes)
+
+    return visited
+
+def recursive_astar_search(problem, start, border, actual_state_cost, heuristic, visited, visited_nodes):
+    while True:
+        if problem.goalTest(start):
+            return visited
+
+        actions = problem.getActions(start)
+
+        for action in actions:
+            new_visited = copy.copy(visited)
+            new_visited.append(action)
+            resulting_state = problem.getResult(start, action)
+            action_cost = problem.getCost(start,action)
+            cost_so_far = actual_state_cost - heuristic(start, problem)
+            if action_cost:
+                action_cost = heuristic(resulting_state, problem) + action_cost + cost_so_far
+            else:
+                action_cost = heuristic(resulting_state, problem) + cost_so_far
+            border.push((resulting_state, action_cost, new_visited), action_cost)
+        
+        new_node_found = False
+        while not new_node_found:
+
+            if border.isEmpty():
+                return False
+            
+            (start, actual_state_cost, visited) = border.pop()
+
+            if start not in visited_nodes.list:
+                visited_nodes.push(start)
+                new_node_found = True
 
 # Abbreviations
 bfs = breadthFirstSearch
