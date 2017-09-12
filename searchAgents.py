@@ -552,7 +552,7 @@ def foodHeuristic(state, problem):
         # Armazena a maior distancia
         if result > h:
             h = result
-    #retorna a maior distancia encontrada
+    #retorna a maior distancia encontrada entre o pacman e a comida
     return h
 
 def mazeDistance(point1, point2, gameState):
@@ -565,10 +565,15 @@ def mazeDistance(point1, point2, gameState):
 
     This might be a useful helper function for your ApproximateSearchAgent.
     """
+    # Pega pontos da comida
     x1, y1 = point1
+    # Pega pontos do pacman
     x2, y2 = point2
+    # Pega as paredes
     walls = gameState.getWalls()
-    assert not walls[x1][y1], 'point1 is a wall: ' + str(point1)
-    assert not walls[x2][y2], 'point2 is a wall: ' + str(point2)
+    # Garante que a localizacao da comida e do pacman nao e uma parede
+    # assert not walls[x1][y1], 'point1 is a wall: ' + str(point1)
+    # assert not walls[x2][y2], 'point2 is a wall: ' + str(point2)
+
     prob = PositionSearchProblem(gameState, start=point1, goal=point2, warn=False, visualize=False)
-    return len(search.bfs(prob))
+    return len(search.astar(prob))
