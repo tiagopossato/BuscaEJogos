@@ -399,7 +399,6 @@ def cornersHeuristic(state, problem):
     admissible (as well as consistent).
     """
     corners = problem.corners  # coordenadas dos cantos
-    print 'Cantos: ', corners
     walls = problem.walls  # coordenadas das paredes do labirinto
     xy = state[0] # estado atual de busca
     cornersVisited = state[1] # cantos ja visitados (na primeira execucao esta vazio)
