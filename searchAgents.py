@@ -397,26 +397,37 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
-    corners = problem.corners  # These are the corner coordinates
-    walls = problem.walls  # These are the walls of the maze, as a Grid (game.py)
-    xy = state[0]
-    cornersVisited = state[1]
+    corners = problem.corners  # coordenadas dos cantos
+    print 'Cantos: ', corners
+    walls = problem.walls  # coordenadas das paredes do labirinto
+    xy = state[0] # estado atual de busca
+    cornersVisited = state[1] # cantos ja visitados (na primeira execucao esta vazio)
     h = 0
     ret = nearDist(xy, corners, cornersVisited)
+    # h recebe a distancia entre o corner e o estado atual
     h += ret[0]
+    # calcula novamente a distancia e atribui a h
     ret = nearDist(ret[1], corners, cornersVisited)
     h += ret[0]
+    # retorna a distancia ate o canto
     return h
 
 def nearDist(state, corners, cornersVisited):
     d = 0
     near_state = ()
+    # foreach (c em cantos)
     for c in corners:
+        """se c nao e um canto visitado 
+        e estado nao e vazio 
+        e c nao e o estado atual (se o pacman nao esta no canto)"""
         if c not in cornersVisited and state is not () and c is not state:
+            # calculo da distancia (heuristica euclidiana)
             dist = ((state[0] - c[0])**2 + (state[1] - c[1]) ** 2) ** 0.5
+            # se a distancia for 0 ou negativa (sem esta verificacao o autograder retorna 0)
             if dist < d or d is 0:
-                d = dist
-                near_state = c
+               d = dist
+               near_state = c
+    # retorna a distancia entre o corner e o estado atual e o estado mais proximo
     return [d, near_state]
 
 class AStarCornersAgent(SearchAgent):
