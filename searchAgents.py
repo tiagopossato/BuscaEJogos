@@ -314,6 +314,7 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
+        #Verifica se o algoritmo encontrou 4 coordenadas (4 cantos)
         if len(state[1]) == 4:
             return True
         else:
@@ -549,14 +550,20 @@ def foodHeuristic(state, problem):
     Subsequent calls to this heuristic can access
     problem.heuristicInfo['wallCount']
     """
+    # Pega posicao atual do pacman e o grid de comidas
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
+    # Transforma o grid em lista
     foods = foodGrid.asList()
     h = 0
+    # Para cada posicao de comida
     for f in foods:
+        # Calcula a distancia entre a comida e o pacman
         result = mazeDistance(f, position, problem.startingGameState)
+        # Armazena a maior distancia
         if result > h:
             h = result
+    #retorna a maior distancia encontrada
     return h
 
 def mazeDistance(point1, point2, gameState):
