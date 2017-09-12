@@ -314,6 +314,7 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
+        #Verifica se o algoritmo encontrou 4 coordenadas (4 cantos)
         if len(state[1]) == 4:
             return True
         else:
