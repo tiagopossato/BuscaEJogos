@@ -158,46 +158,68 @@ def BPLRecursive(node, problem, limit, solution, visited, border):
 
 # euclideanHeuristic: Calcula a distancia em linha reta ate o objetivo
 
+#Funcao aStarSearch, funcao que serve para encontrar o melhor caminho para o objetivo 
+#levando em conta a heuristica que e o custo de cada acao.
 def aStarSearch(problem, heuristic=nullHeuristic):
+    #Pegando o estado inicial na variavel start
     start = problem.getStartState()
+    #criando uma fila de prioridade para a borda
     border = util.PriorityQueue()
+    #calculando a heuristica com o ponto do inicio e o problema
     actual_state_cost = heuristic(start,problem)
-
     visited = []
     visited_nodes = util.Queue()
+    #adicionando o primeiro no visitado como o no de inicio
     visited_nodes.push(start)
-    
+    #chamada recursiva para ir salvando os nos visitados e saber qual o melhor caminho
+    #aqui ira ser passado o custo atual, a heuristica e os nos visitados.
     visited = recursive_astar_search(problem, start, border, actual_state_cost, heuristic, visited, visited_nodes)
 
     return visited
 
 def recursive_astar_search(problem, start, border, actual_state_cost, heuristic, visited, visited_nodes):
+    #While true para ele ficar fazendo sempre enquanto nao encontrar o final.
     while True:
+    #teste para saber se chegou ao final
         if problem.goalTest(start):
+        #se chegar ao fim, sai da funcao recursiva com o return dos nos visitados
             return visited
-
+      #caso nao tenha terminado, uma lista de acoes recebe as acoes possiveis do no inicial.
         actions = problem.getActions(start)
 
+
         for action in actions:
+        #salva os nos visitados nessa variavel new_visited
             new_visited = copy.copy(visited)
             new_visited.append(action)
+            #resulting_state recebe o retorno do resultado da acao start do no atual 
             resulting_state = problem.getResult(start, action)
+            #custo da acao, com a funcao getCost pode-se calcular qual sera o menor custo, assim que o aStar sabe quando ele deve
+            #seguir pelo caminho que esta ou mudar de direcao.
             action_cost = problem.getCost(start,action)
-            cost_so_far = actual_state_cost - heuristic(start, problem)
+            #nesta variavel e calculado o custo atual de chegada menos a heuristica atual
+            cost_so_far = actual_state_cost - heuristic(start, problem) 
+
+            #se existir um custo do estado sem a heuristica, deve ser contabilizado, se nao, contar somente a heuristica + o custo ate o fim.
             if action_cost:
                 action_cost = heuristic(resulting_state, problem) + action_cost + cost_so_far
             else:
                 action_cost = heuristic(resulting_state, problem) + cost_so_far
-            border.push((resulting_state, action_cost, new_visited), action_cost)
-        
-        new_node_found = False
-        while not new_node_found:
 
+            #a lista de borda recebe o no e o custo dele.
+            border.push((resulting_state, action_cost, new_visited), action_cost)
+
+        new_node_found = False 
+ 
+        while not new_node_found:
+            #se a borda estiver vazia, quer dizer que nao tem nada, entao retorna false com problema de nao chegar no fim. 
             if border.isEmpty():
                 return False
-            
+
+            #aqui e salvo o no que acaba de ser desempilhado da borde
             (start, actual_state_cost, visited) = border.pop()
 
+            #se o no start ou seja, o no atual, nao estiver na lista dos visitados entao a lista de visitados adiciona o no atual, caso contrario nao.
             if start not in visited_nodes.list:
                 visited_nodes.push(start)
                 new_node_found = True
