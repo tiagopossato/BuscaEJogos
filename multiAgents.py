@@ -74,13 +74,22 @@ class ReflexAgent(Agent):
         newFood = successorGameState.getFood()
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+
+        # score do estado atual
         score = successorGameState.getScore()
 
+        # Para o estado de cada fantasma, calcular heuristica de manhattan a partir
+        # de estado de pacman, caso distancia minima (2) & fantasma nao assustado,
+        # retorna pontuacao negativa
         for ghost in newGhostStates:
             dist = manhattanDistance(newPos, ghost.getPosition())
             if dist < 2 and ghost.scaredTimer == 0:
                 return -99
         foodScore = 0
+
+        # Para cada comida, calcular heuristica manhattan
+        # filtra o valor da comida com menor dist
+        # retorna valor adicionando score atual
         for food in newFood.asList():
             dist = manhattanDistance(newPos, food)
             if dist < foodScore or foodScore is 0:
