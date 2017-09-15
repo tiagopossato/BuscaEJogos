@@ -285,20 +285,16 @@ class CornersProblem(search.SearchProblem):
     """
 
     def __init__(self, startingGameState):
-        """
-        Stores the walls, pacman's starting position and corners.
-        """
-        self.walls = startingGameState.getWalls()
-        self.startingPosition = startingGameState.getPacmanPosition()
-        top, right = self.walls.height-2, self.walls.width-2
-        self.corners = ((1,1), (1,top), (right, 1), (right, top))
-        for corner in self.corners:
+
+        self.walls = startingGameState.getWalls() # identifica os limites do labirinto
+        self.startingPosition = startingGameState.getPacmanPosition() # armazena a posicao atual do pacman
+        top, right = self.walls.height-2, self.walls.width-2 # identifica os corners para diferentes tamanhos de mapa
+        self.corners = ((1,1), (1,top), (right, 1), (right, top)) # armazena o valor de onde estao os corners
+        for corner in self.corners: # percorre todos os 4 cantos para verificar se possui ou nao comida
             if not startingGameState.hasFood(*corner):
-                print 'Warning: no food in corner ' + str(corner)
+                print 'Warning: no food in corner ' + str(corner) # caso nao encontre comida retorna um warning
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
-        # Please add any code here which you would like to use
-        # in initializing the problem
-        "*** YOUR CODE HERE ***"
+
 
     def getStartState(self):
         """
